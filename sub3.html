@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="mui-content">
+			
+<!--图片轮播-->
+		    <div id="slider" class="mui-slider" >
+		      <div class="mui-slider-group mui-slider-loop"   id="sd">
+		        </div>
+		    <div class="mui-slider-indicator"  id="point">
+<!--<div class="mui-indicator mui-active">
+	嗯哼
+		      </div>-->
+		    </div>
+	<!-- 列表-->
+		    <ul class="mui-table-view"  id="content">
+		    	</ul>
+		</div>
+	</body>
+        <script src="js/mui.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+    /*           图片轮播*/
+    mui.get('http://hoa.hcoder.net/index.php?user=hcoder&pwd=hcoder&m=lunbo',
+    function(data){
+    		console.log(data);
+    		var img=data.split('--hcSplitor--');
+    		var spoint='';
+    		var str='<div class="mui-slider-item   mui-slider-item-duplicate"><a href="#">'+img[img.length-1]+'</a></div>';
+    		for(var k in img){
+    			var simg=img[k];
+    			/*console.log(simg);*/
+    			if(k==0){
+    				spoint+='<div class="mui-indicator  mui-active"></div>'
+    			}else{
+    				spoint+='<div class="mui-indicator"></div>'
+    			}
+    		str+='<div class="mui-slider-item"><a href="#">'+simg+'</a></div>';
+    		
+    		};
+    		str+='<div class="mui-slider-item   mui-slider-item-duplicate"><a href="#">'+img[0]+'</a></div>'
+    		
+    		mui('#sd')[0].innerHTML=str;
+    		mui('#point')[0].innerHTML=spoint;
+    		mui('.mui-slider').slider({interval:1000});
+    }
+    );
+ /*//图文列表*/
+          mui.ajax({
+				url:'http://hoa.hcoder.net/index.php?user=hcoder&pwd=hcoder&m=mediaList&page=1',
+				type:'get',//HTTP请求类型
+				timeout:10000,//超时时间设置为10秒；
+				success:function(data){
+				
+					/*console.log(typeof data);*/
+					var aLists=data.split('--hcSplitor--');
+					/*console.log(aList);*/
+					var str='';
+					for(var i=0;i<aLists.length;i++){
+						/*console.log(aList[i]);*/
+						var alist=aLists[i].split('--hcListSplitor--');
+						/*console.log(alist);*/
+						
+						str+='<li class="mui-table-view-cell mui-media"><a href="javascript:showInIf('+alist[0]+');"><img class="mui-media-object mui-pull-right" src="'+alist[1]+'"><div class="mui-media-body">'+alist[2]+'<p class="mui-ellipsis">'+alist[3]+'</p></div></a></li>'
+
+					}
+					mui("#content")[0].innerHTML=str;
+					
+				},
+				error:function(xhr,type,errorThrown){
+					
+				}
+			});
+			
+		/*	分装打开列表详情窗口函数*/
+		function showInIf(id){
+			mui.openWindow({
+				url:'info.html',
+				id:'info.html',
+				extras:{
+					newid:id
+				}
+			})
+		}
+			
+			
+			mui.plusReady(function () {
+				var self,next,index,prev;
+				self=plus.webview.currentWebview();
+				next=plus.webview.getWebviewById('sub4.html');
+				prev=plus.webview.getWebviewById('sub2.html');
+				index=plus.webview.getLaunchWebview();   /*获取入口窗口*/
+				
+	/*	向左划*/
+			  /* self.drag({
+			   	 	direction:'left',
+                	moveMode:"followFinger"
+			   },{
+			   	view:next,
+			   	moveMode:"follow"
+			   },function(e){
+			   	/*console.log(JSON.stringify(e));*/
+			   	/*if(e.type=='end' && e.result){
+			   		index.evalJS('h("#navfooter").find("a").removeClass("mui-active");h("#sub4").addClass("mui-active");');
+			   	}
+			   });*/
+	/*向右划*/
+			    self.drag({
+			   	 	direction:'right',
+                	moveMode:"followFinger"
+			   },{
+			   	view:prev,
+			   	moveMode:"follow"
+			   },function(e){
+			   	/*console.log(JSON.stringify(e));*/
+			   	if(e.type=='end' && e.result){
+			   		index.evalJS('h("#navfooter").find("a").removeClass("mui-active");h("#sub2").addClass("mui-active");');
+			   	}
+			   });
+			})
+		</script>
+		<style type="text/css">
+			
+			img{
+				width: 300px;
+				height: 280px;
+			}
+		</style>
+</html>

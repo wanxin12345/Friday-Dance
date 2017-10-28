@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <h1 class="mui-title">详情页</h1>
+		</header>
+		<div class="mui-content"    id="newsContent"  >
+		    
+		</div>
+		
+		<div id="shareBox"  >
+			<div id="share"  >
+				<img src="imag/share.png"/ >
+			</div>
+		</div>
+	</body>
+        <script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var shareInfo=null;
+			mui.plusReady(function () {		
+			var self=plus.webview.currentWebview();
+			var nid=self.newid;
+			/*console.log(nid);*/
+			mui.get('http://hoa.hcoder.net/index.php?user=hcoder&pwd=hcoder&m=info&id='+nid,
+			function(data){
+					/*console.log(data);*/
+					var ocontent=JSON.parse(data);
+					shareInfo=ocontent
+					mui('#newsContent')[0].innerHTML=ocontent.content;
+					mui('.mui-title')[0].innerHTML=ocontent.title;
+				}
+			);
+			
+			
+			/*分享操作*/
+			
+			mui('#share')[0].addEventListener('tap',function(){
+				var actionButtons=[{title:'微信好友'},{title:'朋友圈'},{title:'QQ好友'}];
+				var actionsheetstyle={title:'请选择分享类型',cancel:'取消',buttons:actionButtons};
+				plus.nativeUI.actionSheet(actionsheetstyle,function(e){
+					/*console.log(JSON.stringify(e));*/
+					if(e.index>0){
+					/*	console.log(e.index);*/
+						share(e.index);
+					}
+					
+				});
+			});
+			
+         })
+			
+			function share(type){
+				plus.share.getServices(function(services){
+					/*console.log(JSON.stringify(services));*/
+					var wxshare=null;
+					
+						for(var k in services){
+							if(services[k].id=='weixin'){
+								wxshare=services[k];
+								
+						      }
+	                 	}
+					/*console.log(JSON.stringify(wxshare));*/
+					
+					if(wxshare==null){
+						mui.toast('未安装微信或者微信未授权认证');
+						return;}
+					var msg={
+						title:shareInfo.title,
+						content:shareInfo.title,
+					     href:'http://52ocean.com'
+					};
+			
+				if(type==1){
+					msg.extra = {scene:"WXSceneSession"}
+				}else if(type==2){
+					msg.extra = {scene:"WXSceneTimeline"}
+				};
+					/*	发送分享内容*/
+					wxshare.send(msg,function(){
+						mui.toast('分享成功');
+					},function(e){
+						mui.toast('分享失败'+e.message);
+						
+					})
+				},function(e){
+					mui.toast('失败'+e.message);
+                     
+				})
+			}
+			
+			
+		</script>
+</html>

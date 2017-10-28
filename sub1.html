@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<link href="css/mui.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <h1 class="mui-title">首页</h1>
+		</header>
+		 <div class="mui-content">
+		       	<div class="mui-control-content mui-active" id="home">
+			<div id="slider" class="mui-slider" >
+		      <div class="mui-slider-group mui-slider-loop">
+		        <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+		        <div class="mui-slider-item mui-slider-item-duplicate">
+		          <a href="lunbo2.html">
+		            <img src="images_s/10.jpg" >
+		          </a>
+		        </div>
+		        <!-- 第一张 -->
+		        <div class="mui-slider-item">
+		          <a href="lunbo1.html">
+		            <img src="friday/show4.jpg">
+		          </a>
+		        </div>
+		        <!-- 第二张 -->
+		        <div class="mui-slider-item">
+		          <a href="lunbo4.html">
+		            <img src="images_s/12.jpg">
+		          </a>
+		        </div>
+		        <!-- 第三张 -->
+		        <div class="mui-slider-item">
+		          <a href="lunbo3.html">
+		            <img src="images_s/13.jpg">
+		          </a>
+		        </div>
+		        <!-- 第四张 -->
+		        <div class="mui-slider-item">
+		          <a href="lunbo2.html">
+		            <img src="images_s/10.jpg">
+		          </a>
+		        </div>
+		        <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+		        <div class="mui-slider-item mui-slider-item-duplicate">
+		          <a href="lunbo1.html">
+		            <img src="friday/鬼步2.jpg">
+		          </a>
+		        </div>
+		      </div>
+		      <div class="mui-slider-indicator">
+		        <div class="mui-indicator mui-active"></div>
+		        <div class="mui-indicator"></div>
+		        <div class="mui-indicator"></div>
+		        <div class="mui-indicator"></div>
+		      </div>
+		    </div>
+		<ul class="mui-table-view mui-grid-view mui-grid-9">
+		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		    <a href="#">
+		        <span class="mui-icon mui-icon-home"></span>
+		        <div class="mui-media-body">Home</div>
+		    </a>
+		</li>
+		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		    <a href="#">
+		        <span class="mui-icon mui-icon-email"><span class="mui-badge mui-badge-red">5</span></span>
+		        <div class="mui-media-body">Email</div>
+		    </a>
+		</li>
+		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		    <a href="#">
+		        <span class="mui-icon mui-icon-chatbubble"></span>
+		        <div class="mui-media-body">Chat</div>
+		    </a>
+		</li>
+		<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+		    <a href="#">
+		        <span class="mui-icon mui-icon-location"></span>
+		        <div class="mui-media-body">Location</div>
+		    </a>
+		</li>
+		    </ul>
+		    <ul class="mui-table-view">
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right" href="dance_intraduce.html">
+		                    舞蹈室简介
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right" href="number_show.html">
+		                     队员风格墙
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right" href="video_show.html">
+		                     视频展示
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right" href="new_youhui.html">
+		                     最新优惠
+		                </a>
+		            </li>
+		        </ul>
+		</div> 
+		    </div>
+		
+	</body>
+	
+		<script src="js/mui.min.js"></script>
+		 <script type="text/javascript">
+			mui.init();
+			mui('.mui-slider').slider({interval:1000});
+			mui.plusReady(function () {
+				var self,next,index,prev;
+				self=plus.webview.currentWebview();
+				next=plus.webview.getWebviewById('sub2.html');
+				prev=plus.webview.getWebviewById('sub4.html');
+				index=plus.webview.getLaunchWebview();   /*获取入口窗口*/
+				
+	/*	向左划*/
+			   self.drag({
+			   	 	direction:'left',
+                	moveMode:"followFinger"
+			   },{
+			   	view:next,
+			   	moveMode:"follow"
+			   },function(e){
+			   	/*console.log(JSON.stringify(e));*/
+			   	if(e.type=='end' && e.result){
+			   		index.evalJS('h("#navfooter").find("a").removeClass("mui-active");h("#sub2").addClass("mui-active");');
+			   	}
+			   });
+	/*向右划*/
+			    self.drag({
+			   	 	direction:'right',
+                	moveMode:"followFinger"
+			   },{
+			   	view:prev,
+			   	moveMode:"follow"
+			   },function(e){
+			   	/*console.log(JSON.stringify(e));*/
+			   	if(e.type=='end' && e.result){
+			   		index.evalJS('h("#navfooter").find("a").removeClass("mui-active");h("#sub4").addClass("mui-active");');
+			   	}
+			   });
+			})
+			mui('#list').on('tap','a',function(){
+				mui.openWindow({
+					url:'sub1-1.html',
+					id:'sub1-1.html'
+				});
+			});
+			mui('#list2').on('tap','a',function(){
+				mui.openWindow({
+					url:'sub1-2.html',
+					id:'sub1-2.html'
+				});
+			});
+			mui('#list3').on('tap','a',function(){
+				mui.openWindow({
+					url:'sub1-3.html',
+					id:'sub1-3.html'
+				});
+			});
+		</script>
+		<style type="text/css">
+			img{
+				width: 300px;
+				height: 280px;
+			}
+		</style>
+</html>

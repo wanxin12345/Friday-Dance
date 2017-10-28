@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    
+</head>
+<body>
+ <header class="mui-bar mui-bar-nav">
+           <a class="share mui-icon mui-icon-redo mui-pull-right" onclick="shareHref()"
+           	 ></a>
+           	  <h1 class="mui-title" id="head">首页</h1></header>
+        </header>
+	<!--<header class="mui-bar mui-bar-nav">
+   
+	  <h1 class="mui-title" id="head">首页</h1></header>-->
+	  <div class="mui-content">
+	        <nav class="mui-bar mui-bar-tab"  id="navfooter">
+	            <a class="mui-tab-item mui-active"   id="sub1">
+	                <span class="mui-icon mui-icon-home"></span>
+	                <span class="mui-tab-label">首页</span>
+	            </a>
+	            <a class="mui-tab-item"  id="sub2">
+	                <span class="mui-icon mui-icon-image"></span>
+	                <span class="mui-tab-label">卡片视图</span>
+	            </a>
+	            <a class="mui-tab-item"   id="sub3">
+	                <span class="mui-icon mui-icon-bars"></span>
+	                <span class="mui-tab-label">新闻资讯</span>
+	            </a>
+	            <a class="mui-tab-item"   id="sub4">
+	                <span class="mui-icon mui-icon-person"></span>
+	                <span class="mui-tab-label">个人中心</span>
+	            </a>
+	        </nav>
+	    </div>
+	
+</body>
+      <script src="js/h.js"></script>
+		<script src="js/mui.min.js"></script>
+    <link href="css/mui.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init({
+      	/*	初始化子页面*/
+      		subpages:[{
+      			url:'sub1.html',
+      			id:'sub1.html',
+      		    styles:{
+      		    	top:'0px',
+      		    	bottom:'50px',
+      		    	width:'100%'
+      		    }
+      		},{
+      			url:'sub2.html',
+      			id:'sub2.html',
+      		    styles:{
+      		    	top:'44px',
+      		    	bottom:'50px',
+      		    	width:'100%',
+      		    	left:'100%'	
+      		    }
+      		},{
+      			url:'sub3.html',
+      			id:'sub3.html',
+      		    styles:{
+      		    	top:'44px',
+      		    	bottom:'50px',
+      		    	width:'100%',
+      		    	left:'200%'	
+      		    }
+      		},{
+      			url:'sub4.html',
+      			id:'sub4.html',
+      		    styles:{
+      		    	top:'0px',
+      		    	bottom:'50px',
+      		    	width:'100%',
+      		    	left:'300%'	
+      		    }
+      		}]
+      	});
+      	
+      	document.getElementById('sub1').addEventListener('tap',function(){changeSub(0);document.getElementById('head').innerHTML='首页';});
+      	document.getElementById('sub2').addEventListener('tap',function(){changeSub(1);document.getElementById('head').innerHTML='卡片视图';});
+      	document.getElementById('sub3').addEventListener('tap',function(){changeSub(2);document.getElementById('head').innerHTML='新闻资讯'});
+      	document.getElementById('sub4').addEventListener('tap',function(){
+      		var uid=plus.storage.getItem('uid');
+      		if(uid==null){
+      			wxLogin('changeSub(3)');
+      			return false;
+      		}
+      		changeSub(3);
+      		document.getElementById('head').innerHTML='个人中心';
+      	});
+      			
+      			/*封装锚点*/
+      			function changeSub(index){
+      				var sub1=plus.webview.getWebviewById('sub1.html');
+      				var sub2=plus.webview.getWebviewById('sub2.html');
+      				var sub3=plus.webview.getWebviewById('sub3.html');
+      				var sub4=plus.webview.getWebviewById('sub4.html');
+      				
+      				sub1.setStyle({left:(0-index)*100+'%'});
+      				sub2.setStyle({left:(1-index)*100+'%'});
+      				sub3.setStyle({left:(2-index)*100+'%'});
+      				sub4.setStyle({left:(3-index)*100+'%'})
+      				
+      			}
+      			 mui.plusReady(function(){
+      			 	plus.storage.removeItem("uid");
+      			 });
+      	mui.init({
+            swipeBack:true //启用右滑关闭功能
+        });
+
+        var Intent = null,
+            File = null,
+            Uri = null,
+            main = null;
+        var shares = null;
+        var shareImageUrl = '';
+        mui.plusReady(function() {  
+            updateSerivces();
+            if (plus.os.name == "Android") {
+                Intent = plus.android.importClass("android.content.Intent");
+                File = plus.android.importClass("java.io.File");
+                Uri = plus.android.importClass("android.net.Uri");
+                main = plus.android.runtimeMainActivity();
+            }
+        })
+      			 /**
+         * 更新分享服务
+         */
+        function updateSerivces() {
+            plus.share.getServices(function(s) {
+                shares = {};
+                for (var i in s) {
+                    var t = s[i];
+                    shares[t.id] = t;
+                }
+                outSet("获取分享服务列表成功");
+            }, function(e) {
+                outSet("获取分享服务列表失败：" + e.message);
+            });
+        }
+      			   /**
+         * 分享操作
+         */
+        function shareAction(id, ex) {
+            var s = null;
+            if (!id || !(s = shares[id])) {
+                outLine("无效的分享服务！");
+                return;
+            }
+            if (s.authenticated) {
+                outSet("---已授权---");
+                shareMessage(s, ex);
+            } else {
+                outSet("---未授权---");
+                s.authorize(function() {
+                    shareMessage(s, ex);
+                }, function(e) {
+                    outLine("认证授权失败");
+                });
+            }
+        }
+        /**
+         * 发送分享消息
+         */
+        function shareMessage(s,ex) {
+            var msg = {
+                content: '星期舞',
+                href: 'http://www.52ocean.com',
+                title: '星期舞',
+               /* content: 'HGDQ-分享测试-content',
+                thumbs: ['http://img3.3lian.com/2013/v10/4/87.jpg'],
+                pictures: ['http://img3.3lian.com/2013/v10/4/87.jpg'],*/
+               /* extra: {
+                    scene: ex
+                }*/
+            };
+            s.send(msg, function() {
+                outLine("分享成功!");
+            }, function(e) {
+                outLine("分享失败!");
+            });
+        }
+      			 /**
+         * 分享按钮点击事件
+         */
+        function shareHref() {
+            var ids = [{
+                    id: "weixin", 
+                    ex: "WXSceneSession"  /*微信好友*/
+                }, {
+                    id: "weixin",
+                    ex: "WXSceneTimeline" /*微信朋友圈*/
+                }, {
+                    id: "qq"   /*QQ好友*/
+                }, {
+                    id: "tencentweibo"   /*腾讯微博*/
+                },{
+                    id: "sinaweibo"  /*新浪微博*/
+                }],
+                bts = [{
+                    title: "发送给微信好友"
+                }, {
+                    title: "分享到微信朋友圈"
+                }, {
+                    title: "分享到QQ"
+                }, {
+                    title: "分享到腾讯微博"
+                }, {
+                    title: "分享到新浪微博"
+                }];
+            plus.nativeUI.actionSheet({
+                    cancel: "取消",
+                    buttons: bts
+                },
+                function(e) {
+                    var i = e.index;
+                    if (i > 0) {
+                        shareAction(ids[i - 1].id, ids[i - 1].ex);
+                    }
+                }
+            );
+        }       
+        // 控制台输出日志
+        function outSet(msg) {
+            console.log(msg);
+        }
+        // 界面弹出吐司提示
+        function outLine(msg) {
+            mui.toast(msg);
+        }
+    </script>
+    
+</html>
